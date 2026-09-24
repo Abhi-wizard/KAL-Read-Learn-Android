@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "504739260189",
+    "project_id": "kal-read-earn",
+    "storage_bucket": "kal-read-earn.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504739260189:android:6feaca978819942a0aa3f4",
+        "android_client_info": {
+          "package_name": "com.example.kal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGEsOkRAPJ4DDbTU5YPQ-DytnCQ-l_YyU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Kal" parent="Theme.SplashScreen">
+        <item name="android:windowBackground">@drawable/kal_logo</item>
+        <item name="windowSplashScreenBackground">@color/white</item>
+
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.Kal.NoSplash</item>
+    </style>
+
+    <style name="Theme.Kal.NoSplash" parent="Theme.Material3.DayNight.NoActionBar">
+    </style>
+
+</resources>

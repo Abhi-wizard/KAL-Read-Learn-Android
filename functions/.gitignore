@@ -1,0 +1,23 @@
+# Compiled JavaScript files
+lib/
+lib/**/*.js
+lib/**/*.js.map
+
+# TypeScript declaration files
+typings/
+
+# Node.js dependencies
+node_modules/
+package-lock.json
+
+# Environment configuration
+.env
+.env.*
+!.env.example
+*.local
+
+# Firebase Logs
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+*.log

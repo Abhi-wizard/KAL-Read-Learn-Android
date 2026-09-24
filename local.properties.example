@@ -1,0 +1,7 @@
+## Location of the Android SDK. This is only used by Gradle.
+## Windows example:
+# sdk.dir=C\:\\Users\\USERNAME\\AppData\\Local\\Android\\Sdk
+## macOS example:
+# sdk.dir=/Users/USERNAME/Library/Android/sdk
+## Linux example:
+# sdk.dir=/home/USERNAME/Android/Sdk
