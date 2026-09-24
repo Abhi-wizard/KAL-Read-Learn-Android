@@ -25,117 +25,86 @@ Reading educational and literary material often suffers from low engagement and 
 
 ---
 
-## 🎯 The Problem
+## 📱 Application Showcase
 
-- **Passive Consumption**: Readers frequently read books passively without active recall, resulting in low comprehension and poor retention.
-- **Static Testing**: Traditional educational apps rely on static, pre-written question banks that do not adapt to individual reading milestones.
-- **Lack of Incentives**: Young readers lack tangible reward feedback loops that encourage consistent daily reading habits.
-- **Barriers for Indie Authors**: Aspiring writers and authors have limited mobile-first platforms to draft offline, publish directly, and promote their books to targeted readers.
+| Login & Onboarding | User Home & Search | Book Details |
+| :---: | :---: | :---: |
+| ![Login Screen](screenshots/auth/01-login-screen.jpg) | ![User Home](screenshots/home/04-user-home-screen.jpg) | ![Book Details](screenshots/reading/06-book-details-screen.jpg) |
+| **Login & Auth** | **Catalog & Search** | **Book Info & Reviews** |
 
----
+| PDF Book Reading | Loading Minigame | AI Dynamic Quiz |
+| :---: | :---: | :---: |
+| ![Reading Screen](screenshots/reading/07-book-reading-screen.jpg) | ![Puzzle Minigame](screenshots/quiz/14-puzzle-minigame-screen.jpg) | ![Quiz Screen](screenshots/quiz/08-quiz-screen.jpg) |
+| **Streamed Reader** | **15-Puzzle Slider** | **Gemini AI MCQs** |
 
-## 💡 The Solution
+| Quiz Reward Result | Story Editor & Drafts | Community Literature |
+| :---: | :---: | :---: |
+| ![Quiz Result](screenshots/quiz/09-quiz-result-screen.jpg) | ![Writing Screen](screenshots/writing/10-create-writing-screen.jpg) | ![Explore Screen](screenshots/writing/11-explore-writings-screen.jpg) |
+| **Coin Reward Summary** | **Room Offline Editor** | **Genre Feed & Likes** |
 
-KAL introduces an end-to-end reading, learning, and earning ecosystem:
+| Author Promotion Card | Coin Wallet (Vault) | User & Author Profile |
+| :---: | :---: | :---: |
+| ![Author Promotion](screenshots/writing/12-author-book-promotion-screen.jpg) | ![Wallet Screen](screenshots/wallet/13-vault-wallet-screen.jpg) | ![Profile Screen](screenshots/profile/15-profile-screen.jpg) |
+| **Book Ad Syndicate** | **Balance & Transactions** | **History & Roles** |
 
-- **AI-Driven Comprehension Milestones**: Every 10 pages read triggers a dynamically generated quiz extracted specifically from the freshly read text slice using serverless Google Gemini Pro.
-- **Zero-Wait Engagement**: While the AI parses PDF text and crafts unique multiple-choice questions, readers solve an interactive 15-puzzle minigame.
-- **Gamified Economy**: Scoring high on quizzes rewards users with KAL coins, creating a self-sustaining cycle where reading pays for unlocking new books and creative publishing tools.
-- **Dual-Role Ecosystem**: Seamless support for both **Readers** and **Authors**, offering author profiles, promotional book cards, offline Room draft management, and transactional cloud publishing.
-
----
-
-## ✨ Implemented Features
-
-### 📖 1. Digital PDF Reading Engine
-- High-performance, streaming PDF reader with cached local storage.
-- Real-time progress synchronization to Cloud Firestore (`currentPage`, `totalPages`, `progressPercent`).
-- Intelligent milestone tracking that activates quiz prompts at configurable page intervals.
-- Safety bounds that prevent backward navigation past passed quiz checkpoints.
-
-### 🧠 2. AI-Powered Dynamic Quiz Pipeline
-- Serverless event-driven architecture triggered on Firestore `quizRequests`.
-- Cloud Functions extract textual content from precise PDF page ranges via `pdf-parse`.
-- Prompts **Google Gemini 2.5 Pro** to produce 5 unique, contextual Multiple-Choice Questions (MCQs) with single-correct-answer validation.
-- Interactive 45-second countdown timer per question with real-time score computation.
-
-### 🎮 3. Interactive Loading Minigames
-- Extensible `PuzzleRouter` component that randomly presents engaging puzzles during AI question generation.
-- Fully functional **15-Puzzle Sliding Game** (`NumberSlidePuzzle`) with algorithmic random shuffle ensuring solvability.
-
-### 💰 4. Gamified Coin Wallet & Economy
-- Real-time Firestore snapshot listeners on user coin balances (`totalPoints`).
-- Atomic batch operations and Cloud Function transactions for deducting and rewarding coins.
-- Monetization with **Google AdMob Rewarded Video Ads** before quiz challenges.
-
-### ✍️ 5. Creative Writing & Offline Drafts
-- Local draft creation and autosave using **Room Database** (`AppDatabase`, `DraftDao`, `Draft`).
-- Transactional story publishing through Cloud Functions with coin balance deduction (50 coins).
-- Community feed with real-time genre filtering (`Short story`, `Poetry`, `Novels`, `Essays`), sorting by popularity or recency, and optimistic like transactions.
-
-### 📢 6. Author Portal & Book Promotions
-- Dedicated author onboarding with pen names and author biographies.
-- Promotional post creator (`CreatePostScreen`) supporting cloud image uploads via `StorageRepository` and external purchasing links.
-- Community promotion feed (`PromotionsFeedScreen`) displaying author cards and book synopses.
-
-### 🔐 7. Authentication & User Management
-- Firebase Authentication supporting Email/Password and Google Sign-In credentials.
-- Email verification verification flows (`VerifyEmailScreen`) and self-service password recovery (`ForgotPasswordScreen`).
-- Role-based navigation differentiating Readers from Authors.
+*All 15 application screens are cataloged with source references in [`docs/VISUAL-DOCUMENTATION.md`](docs/VISUAL-DOCUMENTATION.md).*
 
 ---
 
-## 🏗️ Architecture
+## 🎯 The Problem & 💡 The Solution
 
-KAL is built using **Clean Architecture** with the **MVI/MVVM** pattern and **Unidirectional Data Flow (UDF)**:
+- **Passive Reading**: Readers frequently read books without active recall, resulting in low comprehension and poor retention.
+  - *KAL's Solution*: Automatically generates a 5-question comprehension quiz derived from the exact 10-page slice read using serverless **Google Gemini Pro**.
+- **Waiting Friction**: AI generation over large texts can introduce delay.
+  - *KAL's Solution*: Integrates an algorithmic **15-Puzzle Sliding Minigame** (`NumberSlidePuzzle`) that keeps readers actively engaged while the quiz compiles.
+- **Lack of Tangible Incentives**: Learners lack immediate feedback loops.
+  - *KAL's Solution*: Correct answers award **10 KAL Coins per point**, which can be spent to unlock premium books and acquire author publishing rights.
+- **Barriers for Indie Writers**: Creative writers have limited mobile-first platforms to draft and publish.
+  - *KAL's Solution*: Provides a local **Room SQLite** offline draft manager with transactional cloud publishing to a community feed.
 
+---
+
+## 🏗️ Architecture & Workflow
+
+KAL follows **Clean Architecture** with **MVVM/MVI** and **Unidirectional Data Flow (UDF)**.
+
+![System Architecture](docs/diagrams/architecture/system-architecture.jpg)
+
+### Core System Workflow
 ```mermaid
-graph TD
-    subgraph UI ["Presentation Layer (Jetpack Compose)"]
-        Screens[Composable Screens]
-        Components[Reusable Widgets & Puzzle Minigame]
-        Navigation[Jetpack Navigation Compose]
-    end
+sequenceDiagram
+    autonumber
+    actor Reader as User / Reader
+    participant App as Android Client (Compose + Hilt)
+    participant AdMob as Google AdMob SDK
+    participant Firestore as Cloud Firestore
+    participant Functions as Cloud Functions v2
+    participant Gemini as Google Gemini 2.5 Pro LLM
 
-    subgraph ViewModelLayer ["State & Business Logic Layer"]
-        VM[Hilt ViewModels]
-        State[StateFlow & SharedFlow Streams]
-    end
-
-    subgraph DataLayer ["Data & Repository Layer"]
-        RoomDB[(Room Local DB - Drafts)]
-        StorageRepo[StorageRepository]
-    end
-
-    subgraph CloudLayer ["Backend & AI Infrastructure"]
-        AuthService[Firebase Auth]
-        FirestoreDB[(Cloud Firestore)]
-        CloudStorage[Cloud Storage]
-        FunctionsNode[Cloud Functions v2]
-        GeminiAPI[Gemini 2.5 Pro LLM]
-        AdMobService[Google AdMob Ads]
-    end
-
-    Screens -->|Events| VM
-    VM -->|StateFlow| Screens
-    VM -->|CRUD| RoomDB
-    VM -->|Uploads| StorageRepo
-    StorageRepo --> CloudStorage
-    VM -->|Auth API| AuthService
-    VM -->|Realtime Sync| FirestoreDB
-    VM -->|Rewarded Callbacks| AdMobService
-    FirestoreDB -->|onDocumentCreated| FunctionsNode
-    FunctionsNode -->|Prompt & Extract| GeminiAPI
-    FunctionsNode -->|Write Quiz Results| FirestoreDB
+    Reader->>App: Reads 10 pages in PDF Reader
+    App->>Reader: Prompts Quiz Challenge
+    App->>AdMob: Shows Rewarded Video Ad
+    AdMob-->>App: Reward verification callback
+    App->>Firestore: Writes doc to quizRequests collection (status: pending)
+    App->>Reader: Displays interactive 15-Puzzle Slider minigame
+    Firestore->>Functions: onDocumentCreated trigger fires
+    Functions->>Functions: Extracts text slice from PDF via pdf-parse
+    Functions->>Gemini: Prompts with strict JSON schema
+    Gemini-->>Functions: Returns 5 verified MCQs
+    Functions->>Firestore: Updates quizRequest (status: complete, quiz: [...])
+    Firestore-->>App: Snapshot listener emits complete quiz payload
+    App->>Reader: Transitions from puzzle to 45s timed Quiz Screen
+    Reader->>App: Submits answers
+    App->>Firestore: Batches score & increments KAL Coin balance
 ```
 
-Detailed architecture breakdowns and sequence flows are documented in [`docs/ARCHITECTURE.md`](file:///e:/kal/docs/ARCHITECTURE.md).
+Detailed technical workflows and ER schemas are documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and [`docs/VISUAL-DOCUMENTATION.md`](docs/VISUAL-DOCUMENTATION.md).
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Layer / Subsystem | Technology / Library | Version | Purpose |
+| Layer / Subsystem | Technology / Library | Version | Verified Role |
 | :--- | :--- | :--- | :--- |
 | **Language** | Kotlin | `1.9.23` | Core Android application development |
 | **UI Framework** | Jetpack Compose (BOM) | `2024.05.00` | Modern declarative user interface |
@@ -202,9 +171,14 @@ KAL-Read-Learn-Android/
 │   └── tsconfig.json
 │
 ├── docs/                             # Engineering Documentation
+│   ├── KAL-Project-Report.pdf        # Official academic project report (46 pages)
 │   ├── ARCHITECTURE.md               # Detailed architecture diagrams & data flows
-│   └── SETUP.md                      # Complete developer setup & build guide
+│   ├── SETUP.md                      # Complete developer setup & build guide
+│   ├── VISUAL-DOCUMENTATION.md       # Extracted diagrams & screenshot index
+│   ├── DOCUMENTATION-AUDIT.md        # Source vs Report consistency verification
+│   └── diagrams/                     # Extracted technical diagrams & flowcharts
 │
+├── screenshots/                      # Extracted application UI screens
 ├── .gitignore                        # Strict rules excluding secrets, build, and IDE artifacts
 ├── build.gradle.kts                  # Project-level build configuration
 ├── settings.gradle.kts               # Module and repository management
@@ -226,7 +200,7 @@ KAL-Read-Learn-Android/
 ### Build & Run
 ```powershell
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/KAL-Read-Learn-Android.git
+git clone https://github.com/Abhi-wizard/KAL-Read-Learn-Android.git
 cd KAL-Read-Learn-Android
 
 # 2. Configure SDK path
@@ -237,33 +211,33 @@ $env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17.0.20.101-hotspot"
 .\gradlew.bat assembleDebug
 ```
 
-For complete instructions including Firebase setup, Cloud Functions deployment, and Gemini API keys, see [`docs/SETUP.md`](file:///e:/kal/docs/SETUP.md).
+For complete instructions including Firebase setup, Cloud Functions deployment, and Gemini API keys, see [`docs/SETUP.md`](docs/SETUP.md).
 
 ---
 
-## 🔐 Security & Clean Repository Policy
+## 📚 Project Documentation Index
 
-- **No Secrets in Source Control**: All live API keys, Gemini tokens, private keystores, and local SDK paths are strictly excluded via [`.gitignore`](file:///e:/kal/.gitignore).
-- **Client Configuration Protection**: Client Firebase configuration templates are provided safely via [`app/google-services.json.example`](file:///e:/kal/app/google-services.json.example).
+- 📄 **[Official Project Report](docs/KAL-Project-Report.pdf)**: Complete 46-page academic project documentation submitted for Master of Computer Applications (MCA) at Bharathiar University (November 2025).
+- 🏗️ **[System Architecture Guide](docs/ARCHITECTURE.md)**: In-depth technical architecture, module interactions, and sequence diagrams.
+- 🛠️ **[Developer Setup & Run Guide](docs/SETUP.md)**: Complete guide to configuring Firebase, Cloud Functions, and building the Android application.
+- 🖼️ **[Visual Asset Documentation](docs/VISUAL-DOCUMENTATION.md)**: Catalog of all 8 system diagrams and 15 UI screenshots with source report references.
+- 🔍 **[Source & Report Consistency Audit](docs/DOCUMENTATION-AUDIT.md)**: Cross-reference audit verifying codebase implementations against the academic report.
+
+---
+
+## 🔐 Security Policy
+
+- **No Secrets in Source Control**: All live API keys, Gemini tokens, private keystores, and local SDK paths are strictly excluded via [`.gitignore`](.gitignore).
+- **Client Configuration Protection**: Client Firebase configuration templates are provided safely via [`app/google-services.json.example`](app/google-services.json.example).
 - **Serverless API Shielding**: Gemini AI API keys operate solely within the secure Firebase Cloud Functions execution environment.
 
 ---
 
 ## ⚠️ Known Limitations
 
-1. **Active Internet Required for AI Quiz**: The dynamic quiz generation requires an active network connection to trigger Cloud Functions and query Gemini Pro.
+1. **Active Internet Required for AI Quiz**: Dynamic quiz generation requires an active network connection to trigger Cloud Functions and query Gemini Pro.
 2. **Paid Firebase Plan Requirement**: Firebase Cloud Functions making outbound calls to the Google Gemini API require the Firebase project to be on the Blaze (pay-as-you-go) billing plan.
 3. **Single Active Book Offline**: While creative writing drafts are fully stored offline via Room SQLite, PDF books are cached individually on initial access.
-
----
-
-## 🚀 Future Improvements
-
-- [ ] **EPUB & Comic Support**: Extend reader engine beyond PDF to support reflowable EPUB format and graphic novels.
-- [ ] **Offline Quiz Model**: Integrate on-device LiteRT / Gemini Nano for offline question synthesis.
-- [ ] **Audiobook Narration**: Text-to-speech integration with synchronized sentence highlighting.
-- [ ] **Expanded Puzzle Suite**: Add Color Sequence (Memory) and Quick Tap (Reaction) puzzle variants to `PuzzleRouter`.
-- [ ] **Author Royalties Payout**: Direct monetization gateway enabling authors to convert KAL coin tips into real-world disbursements.
 
 ---
 
@@ -271,4 +245,5 @@ For complete instructions including Firebase setup, Cloud Functions deployment, 
 
 **Abhimanyu T**  
 *Master of Computer Applications (MCA)*  
-*Android & Cloud Software Engineer*
+*Department of Computer Applications, Bharathiar University, Coimbatore*  
+*GitHub*: [@Abhi-wizard](https://github.com/Abhi-wizard)
